@@ -1,5 +1,31 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 17 Nov 2025 05:53:49 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>01 Mainframe environment configuration</title><link>https://YuQing-ai.github.io/CobolNote/post/01%20Mainframe%20environment%20configuration.html</link><description># Using Hercules to simulate a mainframe environment on a Windows system
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 17 Nov 2025 08:42:28 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>02 Edit the COBOL program using the mainframe.</title><link>https://YuQing-ai.github.io/CobolNote/post/02%20Edit%20the%20COBOL%20program%20using%20the%20mainframe..html</link><description>## First, create the PDS dataset.
+
+Enter '3.4' to access the dataset allocation page (as shown in Figure ①). 
+![Image](https://github.com/user-attachments/assets/1ae09583-ca4d-4d19-a981-8592338d7084)
+Figure ①
+![Image](https://github.com/user-attachments/assets/59d7cc9a-21e2-41e8-bbde-9a555bb76c84)
+Figure ②
+
+Specific parameters are shown in Figure ③. (Note that the NUMBER OF DIRECTORY BLOCKS parameter must not be 0; if it is 0, it will be a PS file.) 
+![Image](https://github.com/user-attachments/assets/c0c8fee2-6323-4a4e-87ac-8751d599ea85)
+Figure ③
+
+After successful creation, as shown in Figure ④, the message 'Data set created' will appear.
+![Image](https://github.com/user-attachments/assets/f9244e25-dbdc-4c27-868d-02abc5ed1a88)
+Figure ③
+
+
+## Then, create the COBOL source program within the dataset. 
+Enter 'E hello' to create your first 'hello world' program.
+
+![Image](https://github.com/user-attachments/assets/8468875a-03ce-4411-814a-143bf64b4760)
+
+![Image](https://github.com/user-attachments/assets/c5ef9747-0e0e-4311-bb80-4fd93d77325a)
+
+![Image](https://github.com/user-attachments/assets/fbc30678-0d66-4f51-8f97-068bf92ee38f)
+
+![Image](https://github.com/user-attachments/assets/096916e7-db9f-473f-9690-a807f933f9f6)。</description><guid isPermaLink="true">https://YuQing-ai.github.io/CobolNote/post/02%20Edit%20the%20COBOL%20program%20using%20the%20mainframe..html</guid><pubDate>Mon, 17 Nov 2025 08:41:59 +0000</pubDate></item><item><title>01 Mainframe environment configuration</title><link>https://YuQing-ai.github.io/CobolNote/post/01%20Mainframe%20environment%20configuration.html</link><description># Using Hercules to simulate a mainframe environment on a Windows system
 
 I recently started learning COBOL and came to understand that mainframe systems offer an environment closer to real-world applications. Consequently, the primary challenge I faced was simulating a mainframe operating environment on a Windows system. Below is a brief introduction to this topic.
 
