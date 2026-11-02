@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 02 Nov 2026 08:33:59 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>04 Datasets and Members on z/OS: Not Just Files and Folders</title><link>https://YuQing-ai.github.io/CobolNote/post/04%20Datasets%20and%20Members%20on%20z-OS-%20Not%20Just%20Files%20and%20Folders.html</link><description># 04 Datasets and Members on z/OS: Not Just Files and Folders
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 02 Nov 2026 08:37:16 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>04 Datasets and Members on z/OS: Not Just Files and Folders</title><link>https://YuQing-ai.github.io/CobolNote/post/04%20Datasets%20and%20Members%20on%20z-OS-%20Not%20Just%20Files%20and%20Folders.html</link><description># 04 Datasets and Members on z/OS: Not Just Files and Folders
 
 &gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: FILES1 | Beginner, Fundamentals | 45 minutes
 &gt; Platform status: Completed (as of 2026-11-02)
@@ -52,7 +52,85 @@ Next: 05 — JCL.
 
 ### やったこと
 
-FILES1 は、z/OS における最も基本的な問い、「データはどこにあるのか」に答えるチャレンジです。</description><guid isPermaLink="true">https://YuQing-ai.github.io/CobolNote/post/04%20Datasets%20and%20Members%20on%20z-OS-%20Not%20Just%20Files%20and%20Folders.html</guid><pubDate>Mon, 02 Nov 2026 08:12:32 +0000</pubDate></item><item><title>02 Edit the COBOL program using the mainframe.</title><link>https://YuQing-ai.github.io/CobolNote/post/02%20Edit%20the%20COBOL%20program%20using%20the%20mainframe..html</link><description>## First, create the PDS dataset.
+FILES1 は、z/OS における最も基本的な問い、「データはどこにあるのか」に答えるチャレンジです。</description><guid isPermaLink="true">https://YuQing-ai.github.io/CobolNote/post/04%20Datasets%20and%20Members%20on%20z-OS-%20Not%20Just%20Files%20and%20Folders.html</guid><pubDate>Mon, 02 Nov 2026 08:12:32 +0000</pubDate></item><item><title>03 Connect to a Real IBM Z Mainframe with VS Code and Zowe</title><link>https://YuQing-ai.github.io/CobolNote/post/03%20Connect%20to%20a%20Real%20IBM%20Z%20Mainframe%20with%20VS%20Code%20and%20Zowe.html</link><description># 03 Connect to a Real IBM Z Mainframe with VS Code and Zowe
+
+&gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: VSC1 | Beginner, Fundamentals | 45 minutes
+&gt; Platform status: Completed (as of 2026-11-02)
+&gt; Source: IBM Z Xplore official VSC1 challenge documentation, plus my own practice on the real system.
+&gt; Language order in this article: English → 日本語 → 中文. The title stays in English.
+
+---
+
+## English
+
+### What I did
+
+VSC1 is the first step from “learning about mainframes” to actually working on one. I installed the tooling, created a Zowe connection profile in VS Code, and submitted a validation job on a real IBM Z system. This is different from my earlier work in Issue #1, where I simulated a mainframe locally with Hercules and TK5. Here the host is real, and the editor is VS Code.
+
+### How I got connected
+
+1. Installed Node.js (LTS), a Java runtime, and VS Code.
+2. Installed the IBM Z Open Editor extension, which brings in Zowe Explorer.
+3. Created the connection profile and edited `zowe.config.json` — this is the core of the challenge, detailed in the next section.
+4. Added my own Z userid and password through “Manage Profile → Update Credentials.” I do not publish credentials here.
+5. Set three filters in Zowe Explorer: DATA SETS to my own userid, USS to my home directory, and JOBS to my userid as owner.
+6. Opened `ZXP.PUBLIC.JCL`, found the member `CHKVSC`, and submitted it as a job. When the validation job succeeded, VSC1 was marked Completed.
+
+### The core of VSC1: creating the profile and editing `zowe.config.json` (tutorial pp. 13–18)
+
+This is where most of the work — and most of the possible mistakes — actually sit, so it is worth going through slowly.
+
+**Step 6 — Click the + next to DATA SETS.** In the Zowe Explorer view, the + sign at the top of the DATA SETS section is how a new connection starts. Clicking it is the entry point to everything that follows; without a profile, there is no dataset view, no USS view, and no job view.
+
+&lt;img width='1448' height='890' alt='Image' src='https://github.com/user-attachments/assets/e7f83507-5fd8-499a-bba6-b9ba3fc0d45e' /&gt;
+
+
+**Step 7 — Create a Team Configuration file, and choose Global.** The prompt offers “Create a new connection to z/OS” and “Create a new Team Configuration file.” Choose the Team Configuration option.
+
+&lt;img width='1386' height='506' alt='Image' src='https://github.com/user-attachments/assets/dc7ae616-0626-4ba0-a1c3-a3d3602a8ae3' /&gt;
+
+ If a default Team Configuration with a profile called `zosmf` was already installed, that can be used instead, with the same edits below. Next, choose the location: **Global** (in the Zowe home directory), not Project. 
+
+&lt;img width='1330' height='534' alt='Image' src='https://github.com/user-attachments/assets/3e1ec613-b5d5-4b27-a925-8f8191607550' /&gt;
+
+The tutorial warns that the VS Code prompt window can disappear if you switch to another application without selecting an option, so it is easier to line the windows up side by side than to keep switching back and forth.
+
+
+
+**Editing `zowe.config.json` — four changes, then save.** An edit session opens on `zowe.config.json`. At the top are the `zosmf` and `tso` sections, and near the bottom is the `base` section. The four changes are:
+
+- In the `zosmf` section, set `port` to **10443**.
+- In the `tso` section, set `account` to **FB3**.
+- In the `base` section, set `host` to the IBM Z Xplore server address given in the challenge.
+- In the `base` section, set `rejectUnauthorized` to **false**, because the server uses a self-signed certificate that Zowe would otherwise reject.
+
+After editing, save the file (File → Save). An unsaved config file is one of the easiest mistakes to make here: everything looks right, but nothing has actually been applied yet.
+
+**My edited file.** The screenshot below is my own `zowe.config.json` after editing, with the four changed values marked. This is the file that my connection actually runs on.
+
+&lt;img width='955' height='1093' alt='Image' src='https://github.com/user-attachments/assets/9aa61461-185c-4b57-9bb9-740c984fda6d' /&gt;
+
+
+### What I learned, including the pitfalls
+
+- A connection problem is usually a profile problem, not a mainframe problem: a wrong credential, a wrong port, or an unsaved config file. The tutorial’s advice is practical — re-enter credentials through Update Credentials, delete and recreate a broken profile if needed, and when in doubt, restart VS Code.
+- The dataset list entry that looks exactly like your userid is not a dataset you can open. Closing that error and moving on is the right response, not a sign that you broke anything.
+- The red wavy line under JCL in the editor is an editor configuration warning. It does not stop you from submitting the job.
+- Apart from getting the profile and config values right, the connection itself went smoothly, with no other obstacle worth noting.
+
+### Why this matters for COBOL
+
+COBOL source lives in datasets, and COBOL programs are run as jobs. If I cannot connect reliably, browse datasets, and submit a job from my editor, every later COBOL step becomes friction. VSC1 removes that friction, and it matches how modernization teams work: the mainframe stays, but the tooling around it becomes modern.
+
+Next: 04 — Datasets and Members on z/OS.
+
+---
+
+## 日本語
+
+### やったこと
+
+VSC1 は、「メインフレームについて学ぶ」段階から、実際にメインフレームで作業する段階への第一歩です。</description><guid isPermaLink="true">https://YuQing-ai.github.io/CobolNote/post/03%20Connect%20to%20a%20Real%20IBM%20Z%20Mainframe%20with%20VS%20Code%20and%20Zowe.html</guid><pubDate>Mon, 02 Nov 2026 08:12:25 +0000</pubDate></item><item><title>02 Edit the COBOL program using the mainframe.</title><link>https://YuQing-ai.github.io/CobolNote/post/02%20Edit%20the%20COBOL%20program%20using%20the%20mainframe..html</link><description>## First, create the PDS dataset.
 
 Enter '3.4' to access the dataset allocation page (as shown in Figure ①). 
 ![Image](https://github.com/user-attachments/assets/1ae09583-ca4d-4d19-a981-8592338d7084)
