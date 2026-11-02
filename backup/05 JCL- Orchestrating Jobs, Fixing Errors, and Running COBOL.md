@@ -30,6 +30,8 @@ Key vocabulary here: **JOB** identifies the job, **EXEC** says which program to 
 7. Submitted `JCL2` and got an ABEND (abnormal end), as the challenge warns you will. There is no utility manual to consult this time; the COBOL code itself is the documentation. I opened the COBOL source named by `//COBOL.SYSIN`, looked at its **FILE-CONTROL** section, and compared the file names used by the program with the DD names in the JCL — for example, the program’s `FIRST-NAME` file is linked to the `FNAMES` DD statement.
 8. The mismatch was one letter short. The program was looking for `COMBINED`, but line 27 of my `JCL2` only had `//COMBINE DD DISP=SHR,DSN=&SYSUID..OUTPUT(NAMES)`. That is the line the editor flagged with “FIX THIS ONE”. The fix was simple: rename it to `//COMBINED`, and add a space after it so the columns still line up, giving `//COMBINED DD DISP=SHR,DSN=&SYSUID..OUTPUT(NAMES)`. Then save with Ctrl+S, right-click `JCL2`, and choose Submit Job. This time it came back CC 0000, with the output in the right member of my `OUTPUT` dataset.
 
+<img width="1025" height="655" alt="Image" src="https://github.com/user-attachments/assets/cb2d1772-5aa1-4110-a849-cc05d423b1d7" />
+
 The general rule I take from this: for a z/OS program to work with a dataset, four things must line up — the file definition inside the program, the actual dataset named in `DSN=`, a correct `DISP=`, and a DD statement whose name matches the program’s file definition.
 
 ### Part 4 — DISP, DUMMY, and getting the output exactly right
@@ -38,8 +40,12 @@ The general rule I take from this: for a z/OS program to work with a dataset, fo
 10. Learned DISP properly: the first field is status — `NEW` (create), `SHR` (reuse, shareable), `OLD` (reuse, exclusive), `MOD` (append, or create if missing, sequential only). The second field is what happens on normal completion (`DELETE`, `CATLG`, `PASS`), and the third is what happens on failure.
 11. Learned `DUMMY`: it means “this DD is required, but it will not actually be used this time, so do not waste time setting it up.” IEBGENER still requires `SYSIN` and `SYSPRINT` DDs even when their output is not needed.
 12. Submitted `JCL3`, got CC 0000 — but CC 0000 only means nothing broke, not that the output is correct. Checking the output, I found two duplicates of my own making. First, `Beacon - 59mi` appeared twice in a row, on lines 52 and 53. The fix: keep line 52, delete line 53 entirely. Do not touch the `//BEACON EXEC PGM=IEBGENER` step on line 48 — that is code, not the duplicated data line. Second, the whole `//CORTLNDT` step was duplicated: the step starting at line 85 was repeated, word for word, at line 94. The fix: keep the first complete step, lines 85 to 92, and delete the entire duplicate block, lines 94 to 101. With those two fixes, plus the correct header and footer, the output was 10 station stops with no repeats, totaling 23 lines in `JCL3OUT`. I also had to delete `JCL3OUT` before each resubmission of `JCL3`.
-13. Finally submitted `CHKJCL1` from `ZXP.PUBLIC.JCL` to validate both `JCL2` and `JCL3`. CC 0000 means done; CC 0127 means go back and recheck.
 
+<img width="1118" height="949" alt="Image" src="https://github.com/user-attachments/assets/b8102807-b8db-4877-b55b-e77b9536559d" />
+
+<img width="1114" height="955" alt="Image" src="https://github.com/user-attachments/assets/db2b7674-264b-4939-9548-c5ff634bbaa6" />
+
+13. Finally submitted `CHKJCL1` from `ZXP.PUBLIC.JCL` to validate both `JCL2` and `JCL3`. CC 0000 means done; CC 0127 means go back and recheck.
 ### Why this matters for COBOL
 
 A COBOL program without JCL does not run in production. Compile, link, and run are themselves jobs described in JCL, and the DD statements are the bridge between the program’s FILE-CONTROL and the real datasets. JCL1 taught me the debugging loop I will use for every COBOL program from now on: submit, read the joblog, fix one thing, resubmit, and verify the output — not just the completion code.
