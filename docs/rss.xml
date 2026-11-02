@@ -1,5 +1,58 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 17 Nov 2025 08:42:28 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>02 Edit the COBOL program using the mainframe.</title><link>https://YuQing-ai.github.io/CobolNote/post/02%20Edit%20the%20COBOL%20program%20using%20the%20mainframe..html</link><description>## First, create the PDS dataset.
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 02 Nov 2026 08:33:59 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>04 Datasets and Members on z/OS: Not Just Files and Folders</title><link>https://YuQing-ai.github.io/CobolNote/post/04%20Datasets%20and%20Members%20on%20z-OS-%20Not%20Just%20Files%20and%20Folders.html</link><description># 04 Datasets and Members on z/OS: Not Just Files and Folders
+
+&gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: FILES1 | Beginner, Fundamentals | 45 minutes
+&gt; Platform status: Completed (as of 2026-11-02)
+&gt; Prerequisite: VSC1. Source: IBM Z Xplore official FILES1 challenge
+
+
+ documentation, plus my own practice.
+&gt; Language order in this article: English → 日本語 → 中文. The title stays in English.
+
+---
+
+## English
+
+### What I did
+
+FILES1 answers the most basic question on z/OS: where does data live? I expanded my Zowe dataset filter, built my own datasets with a setup job, and practiced renaming, deleting, copying, pasting, and creating members. I finished by submitting the validation job and getting a completion code of 0000.
+
+### Steps I followed
+
+1. Refined the DATA SETS filter to my own userid plus `ZXP.PUBLIC` — noting the comma and the period, which matter.
+2. Noted that `ZXP.PUBLIC` datasets are read-only for everyone. If editing fails there, that is expected; real editing happens in my own datasets.
+3. Submitted `PDSBUILD` from `ZXP.PUBLIC.JCL`. It created my `INPUT` partitioned dataset, my `SURPRISE` dataset, and my `SEQDS` sequential dataset. Submitting it again resets the challenge.
+4. Renamed one member of `INPUT`, following the instruction written inside that member.
+5. Deleted another member of `INPUT`, following its own instruction.
+6. Copied a member from `SURPRISE` and pasted it into `INPUT` under its original name, so `INPUT` ended up with two members named after colors.
+7. Added a record to `SEQDS` — a new line saying hello, with a note about the weather and a favorite cartoon — and saved it.
+8. Created a new member in `INPUT` named `MYNEWMBR`. Member names are 1–8 characters: letters, digits, `@`, `#`, and `$` only.
+9. Checked the result: `INPUT` should have 5 members (two original, one renamed, one created, one copied from `SURPRISE`), and the deleted member should be gone. Then I submitted `CHKFILES` from `ZXP.PUBLIC.JCL`. CC 0000 means success; CC 0127 means go back, fix a step, and resubmit.
+
+### Key concepts
+
+- **Partitioned Dataset (PDS) and member:** a PDS is like a library, and each member is like a book on the shelf. A COBOL source program is typically a member of a PDS. This connects directly to Issue #2, where I created a PDS in ISPF.
+- **Sequential Dataset (PS / SEQDS):** one stream of records, with no members. Each record is a line. Sequential access is fastest when an application always reads records top to bottom, for example thousands of customer records in order.
+- **Why not just files and folders?** Different access patterns need different structures. A PDS gives flexibility to fetch any member in any order; a sequential dataset gives speed for ordered processing. Choosing the right structure is part of keeping applications fast.
+- **Dataset attributes:** beyond PDS vs. sequential, datasets carry attributes for performance, security, and scalability. In these challenges I mostly take the defaults, but a systems programmer needs to know what those values mean.
+
+### Why this matters for COBOL
+
+Almost every COBOL problem that looks like a program bug is actually a data problem: the wrong dataset, the wrong member, or the wrong record layout. Learning datasets before writing serious COBOL is not a detour; it is the prerequisite. When I can say “this program reads this member, with this record layout,” I can actually debug it.
+
+My final INPUT members, as shown in the screenshot: GREEN, M4, M5, MYNEWMBR, PURPLE — five members in total, with the deleted member gone.
+
+&lt;img width='570' height='365' alt='Image' src='https://github.com/user-attachments/assets/9dc0cc2f-2788-4f6d-8c49-db2a09a43039' /&gt;
+
+Next: 05 — JCL.
+
+---
+
+## 日本語
+
+### やったこと
+
+FILES1 は、z/OS における最も基本的な問い、「データはどこにあるのか」に答えるチャレンジです。</description><guid isPermaLink="true">https://YuQing-ai.github.io/CobolNote/post/04%20Datasets%20and%20Members%20on%20z-OS-%20Not%20Just%20Files%20and%20Folders.html</guid><pubDate>Mon, 02 Nov 2026 08:12:32 +0000</pubDate></item><item><title>02 Edit the COBOL program using the mainframe.</title><link>https://YuQing-ai.github.io/CobolNote/post/02%20Edit%20the%20COBOL%20program%20using%20the%20mainframe..html</link><description>## First, create the PDS dataset.
 
 Enter '3.4' to access the dataset allocation page (as shown in Figure ①). 
 ![Image](https://github.com/user-attachments/assets/1ae09583-ca4d-4d19-a981-8592338d7084)
