@@ -36,6 +36,8 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 4. My first `ls` showed only `tmp`. I ran `uss-setup`, got back 'Hi and welcome to the ZXPLORE UNIX System Service Challenges!', and ran `ls` again. This time the home directory was full, and it was richer than the tutorial example: `animals.sh`, `assembler`, `cobol-check.config.properties`, `codeathons`, `directory1`, `dslist.py`, `movie-data.csv`, `members.py`, `odbc`, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.
 
+<img width='910' height='970' alt='Image' src='https://github.com/user-attachments/assets/bc83f9b2-2c3e-4912-9424-f1737a46bc47' />
+
 
 ### Part 2 — Moving around, and making files
 
@@ -43,10 +45,14 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 6. Then I made something of my own: `touch mynewfile` and `mkdir mynewdir`, and verified both with `ls`. The listing now showed `mynewdir` and `mynewfile` alongside everything else, including `code1.py`, `code2.py`, `go2`, `hackathons`, `j2p`, `scramble.sh`, `secret.txt`, `test`, and `zosmf`. I did not delete them at this point, and later the `du` output still showed them at 0, which is exactly what an empty file and an empty directory should look like.
 
+<img width='875' height='441' alt='Image' src='https://github.com/user-attachments/assets/5d60b587-96f2-4419-b584-400a2041398c' />
+
 
 ### Part 3 — The same files in Zowe
 
 7. A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to `/z/z70127`, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.
+
+<img width='1106' height='455' alt='Image' src='https://github.com/user-attachments/assets/a9853beb-2d41-4358-83df-347a5ed5de6a' />
 
 
 ### Part 4 — Cracking the secret
@@ -55,18 +61,28 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 9. I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with 'Processing..........Done!' and then garbage. The fifth try, 17, produced: 'congratulations! you unscrambled the message in the uss challenge!!' That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding 'not this one' is the work, not a failure before the work.
 
+<img width='871' height='824' alt='Image' src='https://github.com/user-attachments/assets/79b0aced-e8ae-4e12-a81c-1ae39bb71b60' />
+
 
 ### Part 5 — Redirection, and getting the file exactly right
 
 10. Redirection is where `>` and `>>` stop being theory. I ran the successful command again with `> ussout.txt` at the end, so the output went into the file instead of onto the screen, and verified it with `cat ussout.txt`. Then I appended, never overwrote, with `>>`: first `du -ak >> ussout.txt`, then `date >> ussout.txt`. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.
 
+<img width='885' height='975' alt='Image' src='https://github.com/user-attachments/assets/53c81358-653a-4712-a3d4-c63509d5ff80' />
+
 11. `du -ak` lists disk usage in kilobytes, with `-a` covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size `mynewfile` and `mynewdir` I had just made, and `ussout.txt` itself at 8. The final `cat ussout.txt` showed the file in the right order: first the decoded message, then the `du` output, then the date, Tue Nov 3 00:37:34 CST 2026.
+
+<img width='794' height='796' alt='Image' src='https://github.com/user-attachments/assets/0001afac-1f1d-4203-81dd-6d8a3e480f01' />
 
 
 
 ### Part 6 — Validation
 
 12. I submitted the validation job `CHKUSS1` from `ZXP.PUBLIC.JCL`. In the Jobs view it showed as `@USS1(JOB02768) - SOW1 - CC 0000`. Then the platform showed the Challenge Complete overlay: 'Great work — your progress has been recorded.' That is the evidence, not just my word for it.
+
+<img width='595' height='999' alt='Image' src='https://github.com/user-attachments/assets/2176b589-f641-4779-9b1e-76807d4adfef' />
+
+<img width='1294' height='1004' alt='Image' src='https://github.com/user-attachments/assets/73b7a8b7-0ebb-4856-8c19-fc57435ce58b' />
 
 
 
@@ -110,6 +126,8 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 4. My first `ls` showed only `tmp`. I ran `uss-setup`, got back 'Hi and welcome to the ZXPLORE UNIX System Service Challenges!', and ran `ls` again. This time the home directory was full, and it was richer than the tutorial example: `animals.sh`, `assembler`, `cobol-check.config.properties`, `codeathons`, `directory1`, `dslist.py`, `movie-data.csv`, `members.py`, `odbc`, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.
 
+<img width='910' height='970' alt='Image' src='https://github.com/user-attachments/assets/bc83f9b2-2c3e-4912-9424-f1737a46bc47' />
+
 
 ### Part 2 — Moving around, and making files
 
@@ -117,10 +135,14 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 6. Then I made something of my own: `touch mynewfile` and `mkdir mynewdir`, and verified both with `ls`. The listing now showed `mynewdir` and `mynewfile` alongside everything else, including `code1.py`, `code2.py`, `go2`, `hackathons`, `j2p`, `scramble.sh`, `secret.txt`, `test`, and `zosmf`. I did not delete them at this point, and later the `du` output still showed them at 0, which is exactly what an empty file and an empty directory should look like.
 
+<img width='875' height='441' alt='Image' src='https://github.com/user-attachments/assets/5d60b587-96f2-4419-b584-400a2041398c' />
+
 
 ### Part 3 — The same files in Zowe
 
 7. A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to `/z/z70127`, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.
+
+<img width='1106' height='455' alt='Image' src='https://github.com/user-attachments/assets/a9853beb-2d41-4358-83df-347a5ed5de6a' />
 
 
 ### Part 4 — Cracking the secret
@@ -129,18 +151,28 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 9. I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with 'Processing..........Done!' and then garbage. The fifth try, 17, produced: 'congratulations! you unscrambled the message in the uss challenge!!' That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding 'not this one' is the work, not a failure before the work.
 
+<img width='871' height='824' alt='Image' src='https://github.com/user-attachments/assets/79b0aced-e8ae-4e12-a81c-1ae39bb71b60' />
+
 
 ### Part 5 — Redirection, and getting the file exactly right
 
 10. Redirection is where `>` and `>>` stop being theory. I ran the successful command again with `> ussout.txt` at the end, so the output went into the file instead of onto the screen, and verified it with `cat ussout.txt`. Then I appended, never overwrote, with `>>`: first `du -ak >> ussout.txt`, then `date >> ussout.txt`. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.
 
+<img width='885' height='975' alt='Image' src='https://github.com/user-attachments/assets/53c81358-653a-4712-a3d4-c63509d5ff80' />
+
 11. `du -ak` lists disk usage in kilobytes, with `-a` covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size `mynewfile` and `mynewdir` I had just made, and `ussout.txt` itself at 8. The final `cat ussout.txt` showed the file in the right order: first the decoded message, then the `du` output, then the date, Tue Nov 3 00:37:34 CST 2026.
+
+<img width='794' height='796' alt='Image' src='https://github.com/user-attachments/assets/0001afac-1f1d-4203-81dd-6d8a3e480f01' />
 
 
 
 ### Part 6 — Validation
 
 12. I submitted the validation job `CHKUSS1` from `ZXP.PUBLIC.JCL`. In the Jobs view it showed as `@USS1(JOB02768) - SOW1 - CC 0000`. Then the platform showed the Challenge Complete overlay: 'Great work — your progress has been recorded.' That is the evidence, not just my word for it.
+
+<img width='595' height='999' alt='Image' src='https://github.com/user-attachments/assets/2176b589-f641-4779-9b1e-76807d4adfef' />
+
+<img width='1294' height='1004' alt='Image' src='https://github.com/user-attachments/assets/73b7a8b7-0ebb-4856-8c19-fc57435ce58b' />
 
 
 
@@ -242,6 +274,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>My first <code class="notranslate">ls</code> showed only <code class="notranslate">tmp</code>. I ran <code class="notranslate">uss-setup</code>, got back "Hi and welcome to the ZXPLORE UNIX System Service Challenges!", and ran <code class="notranslate">ls</code> again. This time the home directory was full, and it was richer than the tutorial example: <code class="notranslate">animals.sh</code>, <code class="notranslate">assembler</code>, <code class="notranslate">cobol-check.config.properties</code>, <code class="notranslate">codeathons</code>, <code class="notranslate">directory1</code>, <code class="notranslate">dslist.py</code>, <code class="notranslate">movie-data.csv</code>, <code class="notranslate">members.py</code>, <code class="notranslate">odbc</code>, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.</p>
 </li>
 </ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/bc83f9b2-2c3e-4912-9424-f1737a46bc47"><img width="910" height="970" alt="Image" src="https://github.com/user-attachments/assets/bc83f9b2-2c3e-4912-9424-f1737a46bc47" style="max-width: 100%; height: auto; max-height: 970px;; aspect-ratio: 910 / 970; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>Part 2 — Moving around, and making files</h3>
 <ol start="5">
 <li>
@@ -251,10 +284,12 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>Then I made something of my own: <code class="notranslate">touch mynewfile</code> and <code class="notranslate">mkdir mynewdir</code>, and verified both with <code class="notranslate">ls</code>. The listing now showed <code class="notranslate">mynewdir</code> and <code class="notranslate">mynewfile</code> alongside everything else, including <code class="notranslate">code1.py</code>, <code class="notranslate">code2.py</code>, <code class="notranslate">go2</code>, <code class="notranslate">hackathons</code>, <code class="notranslate">j2p</code>, <code class="notranslate">scramble.sh</code>, <code class="notranslate">secret.txt</code>, <code class="notranslate">test</code>, and <code class="notranslate">zosmf</code>. I did not delete them at this point, and later the <code class="notranslate">du</code> output still showed them at 0, which is exactly what an empty file and an empty directory should look like.</p>
 </li>
 </ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/5d60b587-96f2-4419-b584-400a2041398c"><img width="875" height="441" alt="Image" src="https://github.com/user-attachments/assets/5d60b587-96f2-4419-b584-400a2041398c" style="max-width: 100%; height: auto; max-height: 441px;; aspect-ratio: 875 / 441; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>Part 3 — The same files in Zowe</h3>
 <ol start="7">
 <li>A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to <code class="notranslate">/z/z70127</code>, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.</li>
 </ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/a9853beb-2d41-4358-83df-347a5ed5de6a"><img width="1106" height="455" alt="Image" src="https://github.com/user-attachments/assets/a9853beb-2d41-4358-83df-347a5ed5de6a" style="max-width: 100%; height: auto; max-height: 455px;; aspect-ratio: 1106 / 455; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>Part 4 — Cracking the secret</h3>
 <ol start="8">
 <li>
@@ -264,19 +299,22 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with "Processing..........Done!" and then garbage. The fifth try, 17, produced: "congratulations! you unscrambled the message in the uss challenge!!" That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding "not this one" is the work, not a failure before the work.</p>
 </li>
 </ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/79b0aced-e8ae-4e12-a81c-1ae39bb71b60"><img width="871" height="824" alt="Image" src="https://github.com/user-attachments/assets/79b0aced-e8ae-4e12-a81c-1ae39bb71b60" style="max-width: 100%; height: auto; max-height: 824px;; aspect-ratio: 871 / 824; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>Part 5 — Redirection, and getting the file exactly right</h3>
 <ol start="10">
-<li>
-<p>Redirection is where <code class="notranslate">&gt;</code> and <code class="notranslate">&gt;&gt;</code> stop being theory. I ran the successful command again with <code class="notranslate">&gt; ussout.txt</code> at the end, so the output went into the file instead of onto the screen, and verified it with <code class="notranslate">cat ussout.txt</code>. Then I appended, never overwrote, with <code class="notranslate">&gt;&gt;</code>: first <code class="notranslate">du -ak &gt;&gt; ussout.txt</code>, then <code class="notranslate">date &gt;&gt; ussout.txt</code>. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.</p>
-</li>
-<li>
-<p><code class="notranslate">du -ak</code> lists disk usage in kilobytes, with <code class="notranslate">-a</code> covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size <code class="notranslate">mynewfile</code> and <code class="notranslate">mynewdir</code> I had just made, and <code class="notranslate">ussout.txt</code> itself at 8. The final <code class="notranslate">cat ussout.txt</code> showed the file in the right order: first the decoded message, then the <code class="notranslate">du</code> output, then the date, Tue Nov 3 00:37:34 CST 2026.</p>
-</li>
+<li>Redirection is where <code class="notranslate">&gt;</code> and <code class="notranslate">&gt;&gt;</code> stop being theory. I ran the successful command again with <code class="notranslate">&gt; ussout.txt</code> at the end, so the output went into the file instead of onto the screen, and verified it with <code class="notranslate">cat ussout.txt</code>. Then I appended, never overwrote, with <code class="notranslate">&gt;&gt;</code>: first <code class="notranslate">du -ak &gt;&gt; ussout.txt</code>, then <code class="notranslate">date &gt;&gt; ussout.txt</code>. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.</li>
 </ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/53c81358-653a-4712-a3d4-c63509d5ff80"><img width="885" height="975" alt="Image" src="https://github.com/user-attachments/assets/53c81358-653a-4712-a3d4-c63509d5ff80" style="max-width: 100%; height: auto; max-height: 975px;; aspect-ratio: 885 / 975; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<ol start="11">
+<li><code class="notranslate">du -ak</code> lists disk usage in kilobytes, with <code class="notranslate">-a</code> covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size <code class="notranslate">mynewfile</code> and <code class="notranslate">mynewdir</code> I had just made, and <code class="notranslate">ussout.txt</code> itself at 8. The final <code class="notranslate">cat ussout.txt</code> showed the file in the right order: first the decoded message, then the <code class="notranslate">du</code> output, then the date, Tue Nov 3 00:37:34 CST 2026.</li>
+</ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/0001afac-1f1d-4203-81dd-6d8a3e480f01"><img width="794" height="796" alt="Image" src="https://github.com/user-attachments/assets/0001afac-1f1d-4203-81dd-6d8a3e480f01" style="max-width: 100%; height: auto; max-height: 796px;; aspect-ratio: 794 / 796; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>Part 6 — Validation</h3>
 <ol start="12">
 <li>I submitted the validation job <code class="notranslate">CHKUSS1</code> from <code class="notranslate">ZXP.PUBLIC.JCL</code>. In the Jobs view it showed as <code class="notranslate">@USS1(JOB02768) - SOW1 - CC 0000</code>. Then the platform showed the Challenge Complete overlay: "Great work — your progress has been recorded." That is the evidence, not just my word for it.</li>
 </ol>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/2176b589-f641-4779-9b1e-76807d4adfef"><img width="595" height="999" alt="Image" src="https://github.com/user-attachments/assets/2176b589-f641-4779-9b1e-76807d4adfef" style="max-width: 100%; height: auto; max-height: 999px;; aspect-ratio: 595 / 999; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/73b7a8b7-0ebb-4856-8c19-fc57435ce58b"><img width="1294" height="1004" alt="Image" src="https://github.com/user-attachments/assets/73b7a8b7-0ebb-4856-8c19-fc57435ce58b" style="max-width: 100%; height: auto; max-height: 1004px;; aspect-ratio: 1294 / 1004; background-color: var(--bgColor-muted); border-radius: 6px" class="js-gh-image-fallback"></a></p>
 <h3>Why this matters for COBOL</h3>
 <p>Without USS, a COBOL programmer is stuck in one half of the system. Datasets hold the source and the data, but the shell is where you move files around, run scripts, check disk usage, and chain commands together with redirection. The next challenge, Code, stays in USS and uses Python there, so this is not a detour. It is the working environment for what comes next. What I took away most is not any single command, but the habit: run a command, read its actual output, and only then decide what to do next. The scramble trials and the <code class="notranslate">&gt;</code> versus <code class="notranslate">&gt;&gt;</code> distinction both rewarded exactly that habit.</p>
 <p>Next: Code — learn the basics of programming using Python directly on a z/OS mainframe system (120 minutes).</p>

@@ -24,6 +24,8 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 4. My first `ls` showed only `tmp`. I ran `uss-setup`, got back "Hi and welcome to the ZXPLORE UNIX System Service Challenges!", and ran `ls` again. This time the home directory was full, and it was richer than the tutorial example: `animals.sh`, `assembler`, `cobol-check.config.properties`, `codeathons`, `directory1`, `dslist.py`, `movie-data.csv`, `members.py`, `odbc`, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.
 
+<img width="910" height="970" alt="Image" src="https://github.com/user-attachments/assets/bc83f9b2-2c3e-4912-9424-f1737a46bc47" />
+
 
 ### Part 2 — Moving around, and making files
 
@@ -31,10 +33,14 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 6. Then I made something of my own: `touch mynewfile` and `mkdir mynewdir`, and verified both with `ls`. The listing now showed `mynewdir` and `mynewfile` alongside everything else, including `code1.py`, `code2.py`, `go2`, `hackathons`, `j2p`, `scramble.sh`, `secret.txt`, `test`, and `zosmf`. I did not delete them at this point, and later the `du` output still showed them at 0, which is exactly what an empty file and an empty directory should look like.
 
+<img width="875" height="441" alt="Image" src="https://github.com/user-attachments/assets/5d60b587-96f2-4419-b584-400a2041398c" />
+
 
 ### Part 3 — The same files in Zowe
 
 7. A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to `/z/z70127`, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.
+
+<img width="1106" height="455" alt="Image" src="https://github.com/user-attachments/assets/a9853beb-2d41-4358-83df-347a5ed5de6a" />
 
 
 ### Part 4 — Cracking the secret
@@ -43,18 +49,28 @@ USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It
 
 9. I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with "Processing..........Done!" and then garbage. The fifth try, 17, produced: "congratulations! you unscrambled the message in the uss challenge!!" That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding "not this one" is the work, not a failure before the work.
 
+<img width="871" height="824" alt="Image" src="https://github.com/user-attachments/assets/79b0aced-e8ae-4e12-a81c-1ae39bb71b60" />
+
 
 ### Part 5 — Redirection, and getting the file exactly right
 
 10. Redirection is where `>` and `>>` stop being theory. I ran the successful command again with `> ussout.txt` at the end, so the output went into the file instead of onto the screen, and verified it with `cat ussout.txt`. Then I appended, never overwrote, with `>>`: first `du -ak >> ussout.txt`, then `date >> ussout.txt`. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.
 
+<img width="885" height="975" alt="Image" src="https://github.com/user-attachments/assets/53c81358-653a-4712-a3d4-c63509d5ff80" />
+
 11. `du -ak` lists disk usage in kilobytes, with `-a` covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size `mynewfile` and `mynewdir` I had just made, and `ussout.txt` itself at 8. The final `cat ussout.txt` showed the file in the right order: first the decoded message, then the `du` output, then the date, Tue Nov 3 00:37:34 CST 2026.
+
+<img width="794" height="796" alt="Image" src="https://github.com/user-attachments/assets/0001afac-1f1d-4203-81dd-6d8a3e480f01" />
 
 
 
 ### Part 6 — Validation
 
 12. I submitted the validation job `CHKUSS1` from `ZXP.PUBLIC.JCL`. In the Jobs view it showed as `@USS1(JOB02768) - SOW1 - CC 0000`. Then the platform showed the Challenge Complete overlay: "Great work — your progress has been recorded." That is the evidence, not just my word for it.
+
+<img width="595" height="999" alt="Image" src="https://github.com/user-attachments/assets/2176b589-f641-4779-9b1e-76807d4adfef" />
+
+<img width="1294" height="1004" alt="Image" src="https://github.com/user-attachments/assets/73b7a8b7-0ebb-4856-8c19-fc57435ce58b" />
 
 
 
