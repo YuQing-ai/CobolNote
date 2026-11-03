@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/74230535?s=400&u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="> Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: USS1 | Beginner, Fundamentals | 60 minutes
+>
+> Platform status: Completed (as of 2026-11-03)
+>
+> Prerequisite: VSC1, FILES1, JCL1. Source: IBM Z Xplore official USS1 challenge documentation, plus my own practice.
+>
+> Language order in this article: English → 日本語 → 中文. The title stays in English.
+
+---
+
+## English
+
+### What USS is, in one paragraph
+
+USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It is not a separate machine. It runs on the same system APIs as the z/OS I had already been using, but it organizes things the UNIX way: directories inside directories, files inside directories. That sits alongside what I learned in FILES1, where data lives in datasets and members. A COBOL programmer ends up needing both, because source and business data often live in datasets, while scripts and modern tooling often live in USS.
+
+### Part 1 — Getting into the shell
+
+1. I opened a terminal in VS Code and switched from PowerShell to CMD first, because the tutorial warns that ssh in PowerShell can fail with Permission denied even when the password is right. I typed `cmd` at the PowerShell prompt, then `ssh z70127@204.90.115.200`.
+
+2. The first password attempt came back with Permission denied, please try again. I typed the password again and got in. Nothing in the tutorial was wrong here; it was just a failed first attempt, and retyping it solved it.
+
+3. After login, the banner said IBM Z Xplore learning platform, UNIX System Services 3.1, with the usual warnings: do not install my own copies of the centrally installed tools, do not create virtual environments, do not install products without authorization, and do not upload commercial source code. One line also appeared before the prompt: `/etc/zprofile:338: FSUZ0155 no matches found: /z/z70127/.npm/_logs/*.log`. It did not block anything, so I left it alone and carried on.
+
+4. My first `ls` showed only `tmp`. I ran `uss-setup`, got back 'Hi and welcome to the ZXPLORE UNIX System Service Challenges!', and ran `ls` again. This time the home directory was full, and it was richer than the tutorial example: `animals.sh`, `assembler`, `cobol-check.config.properties`, `codeathons`, `directory1`, `dslist.py`, `movie-data.csv`, `members.py`, `odbc`, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.
+
+
+### Part 2 — Moving around, and making files
+
+5. I checked where I was with `pwd`, which printed `/z/z70127`. Then `cd ~` to go home, `cd directory1` to go in, `pwd` again to confirm `/z/z70127/directory1`, and `cd ..` to go back one level.
+
+6. Then I made something of my own: `touch mynewfile` and `mkdir mynewdir`, and verified both with `ls`. The listing now showed `mynewdir` and `mynewfile` alongside everything else, including `code1.py`, `code2.py`, `go2`, `hackathons`, `j2p`, `scramble.sh`, `secret.txt`, `test`, and `zosmf`. I did not delete them at this point, and later the `du` output still showed them at 0, which is exactly what an empty file and an empty directory should look like.
+
+
+### Part 3 — The same files in Zowe
+
+7. A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to `/z/z70127`, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.
+
+
+### Part 4 — Cracking the secret
+
+8. The task was to run `scramble.sh` against `/z/public/secret.txt` and find the rotation that decodes it. The program takes a file as its first argument and a rotation number as its second, and it only works on lowercase letters. It prints the decoded output, or garbage if the number is wrong.
+
+9. I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with 'Processing..........Done!' and then garbage. The fifth try, 17, produced: 'congratulations! you unscrambled the message in the uss challenge!!' That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding 'not this one' is the work, not a failure before the work.
+
+
+### Part 5 — Redirection, and getting the file exactly right
+
+10. Redirection is where `>` and `>>` stop being theory. I ran the successful command again with `> ussout.txt` at the end, so the output went into the file instead of onto the screen, and verified it with `cat ussout.txt`. Then I appended, never overwrote, with `>>`: first `du -ak >> ussout.txt`, then `date >> ussout.txt`. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.
+
+11. `du -ak` lists disk usage in kilobytes, with `-a` covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size `mynewfile` and `mynewdir` I had just made, and `ussout.txt` itself at 8. The final `cat ussout.txt` showed the file in the right order: first the decoded message, then the `du` output, then the date, Tue Nov 3 00:37:34 CST 2026.
+
+
+
+### Part 6 — Validation
+
+12. I submitted the validation job `CHKUSS1` from `ZXP.PUBLIC.JCL`. In the Jobs view it showed as `@USS1(JOB02768) - SOW1 - CC 0000`. Then the platform showed the Challenge Complete overlay: 'Great work — your progress has been recorded.' That is the evidence, not just my word for it.
+
+
+
+### Why this matters for COBOL
+
+Without USS, a COBOL programmer is stuck in one half of the system. Datasets hold the source and the data, but the shell is where you move files around, run scripts, check disk usage, and chain commands together with redirection. The next challenge, Code, stays in USS and uses Python there, so this is not a detour. It is the working environment for what comes next. What I took away most is not any single command, but the habit: run a command, read its actual output, and only then decide what to do next. The scramble trials and the `>` versus `>>` distinction both rewarded exactly that habit.
+
+Next: Code — learn the basics of programming using Python directly on a z/OS mainframe system (120 minutes).
+
+---
+
+## 日本語
+
+### USS とは、一言でいうと
+
+USS（UNIX System Services）は、z/OS の中にある POSIX 準拠の UNIX 環境です。">
+<meta property="og:title" content="06 Navigating USS on z/OS: SSH, Shell, and Output Redirection">
+<meta property="og:description" content="> Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: USS1 | Beginner, Fundamentals | 60 minutes
+>
+> Platform status: Completed (as of 2026-11-03)
+>
+> Prerequisite: VSC1, FILES1, JCL1. Source: IBM Z Xplore official USS1 challenge documentation, plus my own practice.
+>
+> Language order in this article: English → 日本語 → 中文. The title stays in English.
+
+---
+
+## English
+
+### What USS is, in one paragraph
+
+USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It is not a separate machine. It runs on the same system APIs as the z/OS I had already been using, but it organizes things the UNIX way: directories inside directories, files inside directories. That sits alongside what I learned in FILES1, where data lives in datasets and members. A COBOL programmer ends up needing both, because source and business data often live in datasets, while scripts and modern tooling often live in USS.
+
+### Part 1 — Getting into the shell
+
+1. I opened a terminal in VS Code and switched from PowerShell to CMD first, because the tutorial warns that ssh in PowerShell can fail with Permission denied even when the password is right. I typed `cmd` at the PowerShell prompt, then `ssh z70127@204.90.115.200`.
+
+2. The first password attempt came back with Permission denied, please try again. I typed the password again and got in. Nothing in the tutorial was wrong here; it was just a failed first attempt, and retyping it solved it.
+
+3. After login, the banner said IBM Z Xplore learning platform, UNIX System Services 3.1, with the usual warnings: do not install my own copies of the centrally installed tools, do not create virtual environments, do not install products without authorization, and do not upload commercial source code. One line also appeared before the prompt: `/etc/zprofile:338: FSUZ0155 no matches found: /z/z70127/.npm/_logs/*.log`. It did not block anything, so I left it alone and carried on.
+
+4. My first `ls` showed only `tmp`. I ran `uss-setup`, got back 'Hi and welcome to the ZXPLORE UNIX System Service Challenges!', and ran `ls` again. This time the home directory was full, and it was richer than the tutorial example: `animals.sh`, `assembler`, `cobol-check.config.properties`, `codeathons`, `directory1`, `dslist.py`, `movie-data.csv`, `members.py`, `odbc`, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.
+
+
+### Part 2 — Moving around, and making files
+
+5. I checked where I was with `pwd`, which printed `/z/z70127`. Then `cd ~` to go home, `cd directory1` to go in, `pwd` again to confirm `/z/z70127/directory1`, and `cd ..` to go back one level.
+
+6. Then I made something of my own: `touch mynewfile` and `mkdir mynewdir`, and verified both with `ls`. The listing now showed `mynewdir` and `mynewfile` alongside everything else, including `code1.py`, `code2.py`, `go2`, `hackathons`, `j2p`, `scramble.sh`, `secret.txt`, `test`, and `zosmf`. I did not delete them at this point, and later the `du` output still showed them at 0, which is exactly what an empty file and an empty directory should look like.
+
+
+### Part 3 — The same files in Zowe
+
+7. A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to `/z/z70127`, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.
+
+
+### Part 4 — Cracking the secret
+
+8. The task was to run `scramble.sh` against `/z/public/secret.txt` and find the rotation that decodes it. The program takes a file as its first argument and a rotation number as its second, and it only works on lowercase letters. It prints the decoded output, or garbage if the number is wrong.
+
+9. I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with 'Processing..........Done!' and then garbage. The fifth try, 17, produced: 'congratulations! you unscrambled the message in the uss challenge!!' That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding 'not this one' is the work, not a failure before the work.
+
+
+### Part 5 — Redirection, and getting the file exactly right
+
+10. Redirection is where `>` and `>>` stop being theory. I ran the successful command again with `> ussout.txt` at the end, so the output went into the file instead of onto the screen, and verified it with `cat ussout.txt`. Then I appended, never overwrote, with `>>`: first `du -ak >> ussout.txt`, then `date >> ussout.txt`. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.
+
+11. `du -ak` lists disk usage in kilobytes, with `-a` covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size `mynewfile` and `mynewdir` I had just made, and `ussout.txt` itself at 8. The final `cat ussout.txt` showed the file in the right order: first the decoded message, then the `du` output, then the date, Tue Nov 3 00:37:34 CST 2026.
+
+
+
+### Part 6 — Validation
+
+12. I submitted the validation job `CHKUSS1` from `ZXP.PUBLIC.JCL`. In the Jobs view it showed as `@USS1(JOB02768) - SOW1 - CC 0000`. Then the platform showed the Challenge Complete overlay: 'Great work — your progress has been recorded.' That is the evidence, not just my word for it.
+
+
+
+### Why this matters for COBOL
+
+Without USS, a COBOL programmer is stuck in one half of the system. Datasets hold the source and the data, but the shell is where you move files around, run scripts, check disk usage, and chain commands together with redirection. The next challenge, Code, stays in USS and uses Python there, so this is not a detour. It is the working environment for what comes next. What I took away most is not any single command, but the habit: run a command, read its actual output, and only then decide what to do next. The scramble trials and the `>` versus `>>` distinction both rewarded exactly that habit.
+
+Next: Code — learn the basics of programming using Python directly on a z/OS mainframe system (120 minutes).
+
+---
+
+## 日本語
+
+### USS とは、一言でいうと
+
+USS（UNIX System Services）は、z/OS の中にある POSIX 準拠の UNIX 環境です。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://YuQing-ai.github.io/CobolNote/post/06%20Navigating%20USS%20on%20z-OS-%20SSH%2C%20Shell%2C%20and%20Output%20Redirection.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/74230535?s=400&u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&v=4">
+<title>06 Navigating USS on z/OS: SSH, Shell, and Output Redirection</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">06 Navigating USS on z/OS: SSH, Shell, and Output Redirection</h1>
+<div class="title-right">
+    <a href="https://YuQing-ai.github.io/CobolNote" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/YuQing-ai/CobolNote/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><blockquote>
+<p>Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: USS1 | Beginner, Fundamentals | 60 minutes</p>
+<p>Platform status: Completed (as of 2026-11-03)</p>
+<p>Prerequisite: VSC1, FILES1, JCL1. Source: IBM Z Xplore official USS1 challenge documentation, plus my own practice.</p>
+<p>Language order in this article: English → 日本語 → 中文. The title stays in English.</p>
+</blockquote>
+<hr>
+<h2>English</h2>
+<h3>What USS is, in one paragraph</h3>
+<p>USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It is not a separate machine. It runs on the same system APIs as the z/OS I had already been using, but it organizes things the UNIX way: directories inside directories, files inside directories. That sits alongside what I learned in FILES1, where data lives in datasets and members. A COBOL programmer ends up needing both, because source and business data often live in datasets, while scripts and modern tooling often live in USS.</p>
+<h3>Part 1 — Getting into the shell</h3>
+<ol>
+<li>
+<p>I opened a terminal in VS Code and switched from PowerShell to CMD first, because the tutorial warns that ssh in PowerShell can fail with Permission denied even when the password is right. I typed <code class="notranslate">cmd</code> at the PowerShell prompt, then <code class="notranslate">ssh z70127@204.90.115.200</code>.</p>
+</li>
+<li>
+<p>The first password attempt came back with Permission denied, please try again. I typed the password again and got in. Nothing in the tutorial was wrong here; it was just a failed first attempt, and retyping it solved it.</p>
+</li>
+<li>
+<p>After login, the banner said IBM Z Xplore learning platform, UNIX System Services 3.1, with the usual warnings: do not install my own copies of the centrally installed tools, do not create virtual environments, do not install products without authorization, and do not upload commercial source code. One line also appeared before the prompt: <code class="notranslate">/etc/zprofile:338: FSUZ0155 no matches found: /z/z70127/.npm/_logs/*.log</code>. It did not block anything, so I left it alone and carried on.</p>
+</li>
+<li>
+<p>My first <code class="notranslate">ls</code> showed only <code class="notranslate">tmp</code>. I ran <code class="notranslate">uss-setup</code>, got back "Hi and welcome to the ZXPLORE UNIX System Service Challenges!", and ran <code class="notranslate">ls</code> again. This time the home directory was full, and it was richer than the tutorial example: <code class="notranslate">animals.sh</code>, <code class="notranslate">assembler</code>, <code class="notranslate">cobol-check.config.properties</code>, <code class="notranslate">codeathons</code>, <code class="notranslate">directory1</code>, <code class="notranslate">dslist.py</code>, <code class="notranslate">movie-data.csv</code>, <code class="notranslate">members.py</code>, <code class="notranslate">odbc</code>, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.</p>
+</li>
+</ol>
+<h3>Part 2 — Moving around, and making files</h3>
+<ol start="5">
+<li>
+<p>I checked where I was with <code class="notranslate">pwd</code>, which printed <code class="notranslate">/z/z70127</code>. Then <code class="notranslate">cd ~</code> to go home, <code class="notranslate">cd directory1</code> to go in, <code class="notranslate">pwd</code> again to confirm <code class="notranslate">/z/z70127/directory1</code>, and <code class="notranslate">cd ..</code> to go back one level.</p>
+</li>
+<li>
+<p>Then I made something of my own: <code class="notranslate">touch mynewfile</code> and <code class="notranslate">mkdir mynewdir</code>, and verified both with <code class="notranslate">ls</code>. The listing now showed <code class="notranslate">mynewdir</code> and <code class="notranslate">mynewfile</code> alongside everything else, including <code class="notranslate">code1.py</code>, <code class="notranslate">code2.py</code>, <code class="notranslate">go2</code>, <code class="notranslate">hackathons</code>, <code class="notranslate">j2p</code>, <code class="notranslate">scramble.sh</code>, <code class="notranslate">secret.txt</code>, <code class="notranslate">test</code>, and <code class="notranslate">zosmf</code>. I did not delete them at this point, and later the <code class="notranslate">du</code> output still showed them at 0, which is exactly what an empty file and an empty directory should look like.</p>
+</li>
+</ol>
+<h3>Part 3 — The same files in Zowe</h3>
+<ol start="7">
+<li>A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to <code class="notranslate">/z/z70127</code>, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.</li>
+</ol>
+<h3>Part 4 — Cracking the secret</h3>
+<ol start="8">
+<li>
+<p>The task was to run <code class="notranslate">scramble.sh</code> against <code class="notranslate">/z/public/secret.txt</code> and find the rotation that decodes it. The program takes a file as its first argument and a rotation number as its second, and it only works on lowercase letters. It prints the decoded output, or garbage if the number is wrong.</p>
+</li>
+<li>
+<p>I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with "Processing..........Done!" and then garbage. The fifth try, 17, produced: "congratulations! you unscrambled the message in the uss challenge!!" That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding "not this one" is the work, not a failure before the work.</p>
+</li>
+</ol>
+<h3>Part 5 — Redirection, and getting the file exactly right</h3>
+<ol start="10">
+<li>
+<p>Redirection is where <code class="notranslate">&gt;</code> and <code class="notranslate">&gt;&gt;</code> stop being theory. I ran the successful command again with <code class="notranslate">&gt; ussout.txt</code> at the end, so the output went into the file instead of onto the screen, and verified it with <code class="notranslate">cat ussout.txt</code>. Then I appended, never overwrote, with <code class="notranslate">&gt;&gt;</code>: first <code class="notranslate">du -ak &gt;&gt; ussout.txt</code>, then <code class="notranslate">date &gt;&gt; ussout.txt</code>. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.</p>
+</li>
+<li>
+<p><code class="notranslate">du -ak</code> lists disk usage in kilobytes, with <code class="notranslate">-a</code> covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size <code class="notranslate">mynewfile</code> and <code class="notranslate">mynewdir</code> I had just made, and <code class="notranslate">ussout.txt</code> itself at 8. The final <code class="notranslate">cat ussout.txt</code> showed the file in the right order: first the decoded message, then the <code class="notranslate">du</code> output, then the date, Tue Nov 3 00:37:34 CST 2026.</p>
+</li>
+</ol>
+<h3>Part 6 — Validation</h3>
+<ol start="12">
+<li>I submitted the validation job <code class="notranslate">CHKUSS1</code> from <code class="notranslate">ZXP.PUBLIC.JCL</code>. In the Jobs view it showed as <code class="notranslate">@USS1(JOB02768) - SOW1 - CC 0000</code>. Then the platform showed the Challenge Complete overlay: "Great work — your progress has been recorded." That is the evidence, not just my word for it.</li>
+</ol>
+<h3>Why this matters for COBOL</h3>
+<p>Without USS, a COBOL programmer is stuck in one half of the system. Datasets hold the source and the data, but the shell is where you move files around, run scripts, check disk usage, and chain commands together with redirection. The next challenge, Code, stays in USS and uses Python there, so this is not a detour. It is the working environment for what comes next. What I took away most is not any single command, but the habit: run a command, read its actual output, and only then decide what to do next. The scramble trials and the <code class="notranslate">&gt;</code> versus <code class="notranslate">&gt;&gt;</code> distinction both rewarded exactly that habit.</p>
+<p>Next: Code — learn the basics of programming using Python directly on a z/OS mainframe system (120 minutes).</p>
+<hr>
+<h2>日本語</h2>
+<h3>USS とは、一言でいうと</h3>
+<p>USS（UNIX System Services）は、z/OS の中にある POSIX 準拠の UNIX 環境です。別のマシンではありません。すでに使ってきた z/OS と同じシステム API の上で動きますが、整理の仕方は UNIX 流で、ディレクトリの中にディレクトリ、ディレクトリの中にファイルがあります。FILES1 で学んだデータセットとメンバーという整理の仕方と並んで存在します。COBOL のプログラマーには両方が必要です。ソースや業務データはデータセットにあることが多く、スクリプトやモダンなツールは USS にあることが多いからです。</p>
+<h3>パート 1 — シェルに入る</h3>
+<ol>
+<li>
+<p>VS Code でターミナルを開き、まず PowerShell から CMD に切り替えました。チュートリアルに、PowerShell で ssh を使うとパスワードが合っていても Permission denied になることがあると書いてあったからです。PowerShell のプロンプトで <code class="notranslate">cmd</code> と打ち、次に <code class="notranslate">ssh z70127@204.90.115.200</code> と打ちました。</p>
+</li>
+<li>
+<p>最初のパスワード入力は Permission denied, please try again. と返ってきました。もう一度入力したら入ることができました。チュートリアルが間違っていたわけではなく、最初の入力が失敗しただけで、打ち直したら解決しました。</p>
+</li>
+<li>
+<p>ログイン後のバナーには IBM Z Xplore learning platform、UNIX System Services 3.1 と表示され、集中管理されているツールは自分で入れ直さないこと、仮想環境を作らないこと、許可なく製品を入れないこと、商用のソースコードをアップロードしないこと、といった注意書きがありました。プロンプトの前には <code class="notranslate">/etc/zprofile:338: FSUZ0155 no matches found: /z/z70127/.npm/_logs/*.log</code> という行も出ましたが、何も妨げなかったので、そのまま進めました。</p>
+</li>
+<li>
+<p>最初の <code class="notranslate">ls</code> では <code class="notranslate">tmp</code> しか表示されませんでした。<code class="notranslate">uss-setup</code> を実行すると "Hi and welcome to the ZXPLORE UNIX System Service Challenges!" と返ってきて、もう一度 <code class="notranslate">ls</code> を実行すると、ホームディレクトリはチュートリアルの例よりもずっとにぎやかでした。<code class="notranslate">animals.sh</code>、<code class="notranslate">assembler</code>、<code class="notranslate">cobol-check.config.properties</code>、<code class="notranslate">codeathons</code>、<code class="notranslate">directory1</code>、<code class="notranslate">dslist.py</code>、<code class="notranslate">movie-data.csv</code>、<code class="notranslate">members.py</code>、<code class="notranslate">odbc</code> など、これまでの作業で残ったものが並んでいました。実際のホームディレクトリは教科書のきれいな例ではない、という当たり前のことを思い出させられました。</p>
+</li>
+</ol>
+<h3>パート 2 — 移動と、ファイルの作成</h3>
+<ol start="5">
+<li>
+<p><code class="notranslate">pwd</code> で自分の位置を確認すると <code class="notranslate">/z/z70127</code> でした。<code class="notranslate">cd ~</code> でホームに戻り、<code class="notranslate">cd directory1</code> で入り、<code class="notranslate">pwd</code> で <code class="notranslate">/z/z70127/directory1</code> を確認し、<code class="notranslate">cd ..</code> で 1 つ上に戻りました。</p>
+</li>
+<li>
+<p>次に自分のものを作りました。<code class="notranslate">touch mynewfile</code> と <code class="notranslate">mkdir mynewdir</code> を実行し、<code class="notranslate">ls</code> で確認しました。一覧には <code class="notranslate">mynewdir</code> と <code class="notranslate">mynewfile</code> が加わり、そのほか <code class="notranslate">code1.py</code>、<code class="notranslate">code2.py</code>、<code class="notranslate">go2</code>、<code class="notranslate">hackathons</code>、<code class="notranslate">j2p</code>、<code class="notranslate">scramble.sh</code>、<code class="notranslate">secret.txt</code>、<code class="notranslate">test</code>、<code class="notranslate">zosmf</code> なども並んでいました。この時点では削除せず、後の <code class="notranslate">du</code> の出力でも両方とも 0 と表示されました。空のファイルと空のディレクトリなら、当然の結果です。</p>
+</li>
+</ol>
+<h3>パート 3 — Zowe でも同じファイルを見る</h3>
+<ol start="7">
+<li>シェルは入口の 1 つで、Zowe はもう 1 つの入口です。Zowe Explorer の USS ビューで、フィルターを自分のホームディレクトリ <code class="notranslate">/z/z70127</code>（すべて小文字）に設定しました。ターミナルと Zowe で同じホームディレクトリが見えることが、ここでの要点でした。USS のファイルはターミナルの中に閉じているわけではなく、データセットだけがシステムの中身を見る方法でもありません。このチャレンジの残りは、学ぶべきはコマンドを打つこと、確認に使うのはビューだという理由で、ターミナルで進め、Zowe で確認しました。</li>
+</ol>
+<h3>パート 4 — 秘密の解読</h3>
+<ol start="8">
+<li>
+<p>課題は、<code class="notranslate">/z/public/secret.txt</code> に対して <code class="notranslate">scramble.sh</code> を実行し、解読できる回転数を見つけることでした。このプログラムは第 1 引数にファイル、第 2 引数に回転数をとり、小文字にしか効きません。数が合えば解読した出力が、合わなければ意味不明な文字列が出ます。</p>
+</li>
+<li>
+<p>試した順番は 13、7、3、12 でした。どれも "Processing..........Done!" の後に読めない文字列が出るだけでした。5 回目の 17 で、"congratulations! you unscrambled the message in the uss challenge!!" と出ました。方法はこれだけです。近道はなく、4 回の間違いを捨て、1 回の正解を残しただけです。数を試し、出力を読み、「これではない」と判断すること自体が作業であって、作業の前の失敗ではありません。</p>
+</li>
+</ol>
+<h3>パート 5 — リダイレクトと、ファイルをきちんと作ること</h3>
+<ol start="10">
+<li>
+<p>リダイレクトは、<code class="notranslate">&gt;</code> と <code class="notranslate">&gt;&gt;</code> が理論でなくなる場所です。成功したコマンドをもう一度実行し、末尾に <code class="notranslate">&gt; ussout.txt</code> を付けて、出力を画面ではなくファイルに入れ、<code class="notranslate">cat ussout.txt</code> で確認しました。その後は上書きせず、追加だけをしました。まず <code class="notranslate">du -ak &gt;&gt; ussout.txt</code>、次に <code class="notranslate">date &gt;&gt; ussout.txt</code> です。この違いは重要で、ステップ 11 や 12 で上書きしてしまったら、解読したメッセージが消えてしまいます。</p>
+</li>
+<li>
+<p><code class="notranslate">du -ak</code> はキロバイト単位のディスク使用量を、カレントディレクトリとその下すべてについて（<code class="notranslate">-a</code>）一覧にします。自分のホームディレクトリは合計 694 で、一覧にはこれまでのチャレンジの残り、作ったばかりの 0 サイズの <code class="notranslate">mynewfile</code> と <code class="notranslate">mynewdir</code>、そして <code class="notranslate">ussout.txt</code> 自体の 8 が含まれていました。最後の <code class="notranslate">cat ussout.txt</code> では、解読したメッセージ、次に <code class="notranslate">du</code> の出力、最後に日付 Tue Nov 3 00:37:34 CST 2026 という正しい順番で並んでいました。</p>
+</li>
+</ol>
+<h3>パート 6 — 検証</h3>
+<ol start="12">
+<li><code class="notranslate">ZXP.PUBLIC.JCL</code> から検証ジョブ <code class="notranslate">CHKUSS1</code> をサブミットしました。Jobs ビューには <code class="notranslate">@USS1(JOB02768) - SOW1 - CC 0000</code> と表示されました。次にプラットフォームに Challenge Complete のオーバーレイが出て、"Great work — your progress has been recorded." と表示されました。これが証拠で、自分の言葉だけではありません。</li>
+</ol>
+<h3>COBOL にとってなぜ重要か</h3>
+<p>USS がなければ、COBOL のプログラマーはシステムの半分にしか入れません。データセットにはソースとデータがありますが、ファイルを動かし、スクリプトを実行し、ディスク使用量を確認し、リダイレクトでコマンドをつなげるのはシェルです。次のチャレンジ Code も USS の中で Python を使うので、これは寄り道ではありません。次に進むための作業環境そのものです。最も持ち帰ったのは、個別のコマンドではなく、習慣です。コマンドを実行し、実際の出力を読み、それから次に何をするか決める。スクランブルの試行も、<code class="notranslate">&gt;</code> と <code class="notranslate">&gt;&gt;</code> の区別も、まさにその習慣を報いるものでした。</p>
+<p>次回：Code — z/OS のメインフレーム上で直接 Python を使ったプログラミングの基礎（120 分）。</p>
+<hr>
+<h2>中文</h2>
+<h3>USS 一句话讲清楚</h3>
+<p>USS，也就是 UNIX System Services，是 z/OS 里一层符合 POSIX 标准的 UNIX 环境。它不是另一台机器，而是跑在同一套 z/OS 系统 API 上，只是按 UNIX 的方式组织东西：文件夹里套文件夹，文件夹里放文件。这和 FILES1 里学的数据集加成员是并存的两套组织方式。COBOL 程序员两边都得认，因为源码和业务数据常在数据集里，而脚本和现代工具常在 USS 里。</p>
+<h3>第一部分 — 进 shell</h3>
+<ol>
+<li>
+<p>我在 VS Code 里打开终端，先从 PowerShell 切到 CMD，因为教程里提醒过，PowerShell 里用 ssh 可能密码没错也报 Permission denied。我在 PowerShell 提示符下先敲 <code class="notranslate">cmd</code>，再敲 <code class="notranslate">ssh z70127@204.90.115.200</code>。</p>
+</li>
+<li>
+<p>第一次输密码返回了 Permission denied, please try again。再输一次就进去了。教程没错，就是第一次没输对，重输就解决了。</p>
+</li>
+<li>
+<p>登录后横幅写着 IBM Z Xplore learning platform、UNIX System Services 3.1，还有一串注意事项：集中安装的工具不要自己另装、不要建虚拟环境、没经过授权不要装产品、不要上传商业源码。提示符前面还出现了一行 <code class="notranslate">/etc/zprofile:338: FSUZ0155 no matches found: /z/z70127/.npm/_logs/*.log</code>，它没挡住任何事，我就没管它，继续往下做。</p>
+</li>
+<li>
+<p>第一次 <code class="notranslate">ls</code> 只看到 <code class="notranslate">tmp</code>。跑了 <code class="notranslate">uss-setup</code>，回了一句 Hi and welcome to the ZXPLORE UNIX System Service Challenges!，再 <code class="notranslate">ls</code> 一次，主目录就满了，而且比教程示例要杂得多：<code class="notranslate">animals.sh</code>、<code class="notranslate">assembler</code>、<code class="notranslate">cobol-check.config.properties</code>、<code class="notranslate">codeathons</code>、<code class="notranslate">directory1</code>、<code class="notranslate">dslist.py</code>、<code class="notranslate">movie-data.csv</code>、<code class="notranslate">members.py</code>、<code class="notranslate">odbc</code> 等等，都是前面做下来的残留。这倒是个实在的提醒：真实的主目录不是教科书里干干净净的例子。</p>
+</li>
+</ol>
+<h3>第二部分 — 移动、建文件</h3>
+<ol start="5">
+<li>
+<p>先用 <code class="notranslate">pwd</code> 看自己在哪，显示 <code class="notranslate">/z/z70127</code>。然后 <code class="notranslate">cd ~</code> 回主目录，<code class="notranslate">cd directory1</code> 进去，再 <code class="notranslate">pwd</code> 确认是 <code class="notranslate">/z/z70127/directory1</code>，<code class="notranslate">cd ..</code> 回上一级。</p>
+</li>
+<li>
+<p>接着建了自己的东西：<code class="notranslate">touch mynewfile</code> 和 <code class="notranslate">mkdir mynewdir</code>，用 <code class="notranslate">ls</code> 验证。列表里多了 <code class="notranslate">mynewdir</code> 和 <code class="notranslate">mynewfile</code>，旁边还有 <code class="notranslate">code1.py</code>、<code class="notranslate">code2.py</code>、<code class="notranslate">go2</code>、<code class="notranslate">hackathons</code>、<code class="notranslate">j2p</code>、<code class="notranslate">scramble.sh</code>、<code class="notranslate">secret.txt</code>、<code class="notranslate">test</code>、<code class="notranslate">zosmf</code> 等等。我这一步没删它们，后面 <code class="notranslate">du</code> 里它们俩都是 0，空文件和空目录就该是这个样子。</p>
+</li>
+</ol>
+<h3>第三部分 — 在 Zowe 里看同一批文件</h3>
+<ol start="7">
+<li>shell 是一种入口，Zowe 是另一种入口。我在 Zowe Explorer 的 USS 视图里把过滤器设成自己的主目录 <code class="notranslate">/z/z70127</code>，全小写。终端和 Zowe 里看到同一个主目录，这一点本身就是关键：USS 的文件不是只关在终端里的，数据集也不是看系统内容的唯一办法。这关剩下的部分，我用终端做、用 Zowe 核对，因为要学的是敲命令，要确认的是视图。</li>
+</ol>
+<h3>第四部分 — 解开秘密</h3>
+<ol start="8">
+<li>
+<p>任务是对 <code class="notranslate">/z/public/secret.txt</code> 跑 <code class="notranslate">scramble.sh</code>，找出能解开它的轮转数。这个程序第一个参数是文件，第二个参数是轮转数，只对小写字母有效。数对了就输出解开的内容，数错了就输出一串乱码。</p>
+</li>
+<li>
+<p>我试的顺序是 13、7、3、12，每次都是先出 Processing..........Done!，然后一串读不懂的东西。第五次试 17，出了 congratulations! you unscrambled the message in the uss challenge!! 方法就是这么朴素，没有捷径，四个错的扔掉，一个对的留下。试一个数、读输出、判断“不是这个”，这本身就是干活，不是干活之前的失败。</p>
+</li>
+</ol>
+<h3>第五部分 — 重定向，把文件做到完全正确</h3>
+<ol start="10">
+<li>
+<p>重定向就是 <code class="notranslate">&gt;</code> 和 <code class="notranslate">&gt;&gt;</code> 从理论变成手感的地方。我把成功的那条命令再跑一次，末尾加上 <code class="notranslate">&gt; ussout.txt</code>，输出就进了文件而不是屏幕，再用 <code class="notranslate">cat ussout.txt</code> 验证。之后只追加、不覆盖：先 <code class="notranslate">du -ak &gt;&gt; ussout.txt</code>，再 <code class="notranslate">date &gt;&gt; ussout.txt</code>。这个区别很重要，在第 11、12 步要是手滑用了覆盖，解开的信息就没了。</p>
+</li>
+<li>
+<p><code class="notranslate">du -ak</code> 是按 KB 列磁盘用量，<code class="notranslate">-a</code> 是当前目录及下面所有目录都算。我的主目录合计是 694，列表里有前面各关的残留、刚建的 0 大小的 <code class="notranslate">mynewfile</code> 和 <code class="notranslate">mynewdir</code>，还有 <code class="notranslate">ussout.txt</code> 本身的 8。最后一次 <code class="notranslate">cat ussout.txt</code>，顺序正好是三段：先是解开的信息，再是 <code class="notranslate">du</code> 的输出，最后是日期 Tue Nov 3 00:37:34 CST 2026。</p>
+</li>
+</ol>
+<h3>第六部分 — 验证</h3>
+<ol start="12">
+<li>我从 <code class="notranslate">ZXP.PUBLIC.JCL</code> 提交了验证作业 <code class="notranslate">CHKUSS1</code>，作业视图里显示 <code class="notranslate">@USS1(JOB02768) - SOW1 - CC 0000</code>。接着平台弹出了 Challenge Complete：“Great work — your progress has been recorded.” 这就是证据，不只是我自己说做完了。</li>
+</ol>
+<h3>对以后学 COBOL 有什么用</h3>
+<p>没有 USS，COBOL 程序员只能进系统的一半。数据集里有源码和数据，但搬文件、跑脚本、查磁盘用量、用重定向把命令串起来，都得靠 shell。下一关 Code 还在 USS 里用 Python，所以这不是绕路，而是接下来干活的环境本身。我带走最多的不是某一条命令，而是一个习惯：先跑命令、读真实输出，再决定下一步。解 scramble 的五次尝试和 <code class="notranslate">&gt;</code> 与 <code class="notranslate">&gt;&gt;</code> 的区别，奖励的正是这个习惯。</p>
+<p>下一篇：Code — 在 z/OS 大型机上直接用 Python 学编程基础（120 分钟）。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://YuQing-ai.github.io/CobolNote">The Note for Learning COBOL</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","YuQing-ai/CobolNote");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

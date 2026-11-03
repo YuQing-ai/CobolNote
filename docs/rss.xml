@@ -1,5 +1,77 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Mon, 02 Nov 2026 09:20:08 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>05 JCL: Orchestrating Jobs, Fixing Errors, and Running COBOL</title><link>https://YuQing-ai.github.io/CobolNote/post/05%20JCL-%20Orchestrating%20Jobs%2C%20Fixing%20Errors%2C%20and%20Running%20COBOL.html</link><description>&gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: JCL1 | Beginner, Fundamentals | 60 minutes
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Tue, 03 Nov 2026 06:50:11 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>06 Navigating USS on z/OS: SSH, Shell, and Output Redirection</title><link>https://YuQing-ai.github.io/CobolNote/post/06%20Navigating%20USS%20on%20z-OS-%20SSH%2C%20Shell%2C%20and%20Output%20Redirection.html</link><description>&gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: USS1 | Beginner, Fundamentals | 60 minutes
+&gt;
+&gt; Platform status: Completed (as of 2026-11-03)
+&gt;
+&gt; Prerequisite: VSC1, FILES1, JCL1. Source: IBM Z Xplore official USS1 challenge documentation, plus my own practice.
+&gt;
+&gt; Language order in this article: English → 日本語 → 中文. The title stays in English.
+
+---
+
+## English
+
+### What USS is, in one paragraph
+
+USS, UNIX System Services, is a POSIX-compliant UNIX environment inside z/OS. It is not a separate machine. It runs on the same system APIs as the z/OS I had already been using, but it organizes things the UNIX way: directories inside directories, files inside directories. That sits alongside what I learned in FILES1, where data lives in datasets and members. A COBOL programmer ends up needing both, because source and business data often live in datasets, while scripts and modern tooling often live in USS.
+
+### Part 1 — Getting into the shell
+
+1. I opened a terminal in VS Code and switched from PowerShell to CMD first, because the tutorial warns that ssh in PowerShell can fail with Permission denied even when the password is right. I typed `cmd` at the PowerShell prompt, then `ssh z70127@204.90.115.200`.
+
+2. The first password attempt came back with Permission denied, please try again. I typed the password again and got in. Nothing in the tutorial was wrong here; it was just a failed first attempt, and retyping it solved it.
+
+3. After login, the banner said IBM Z Xplore learning platform, UNIX System Services 3.1, with the usual warnings: do not install my own copies of the centrally installed tools, do not create virtual environments, do not install products without authorization, and do not upload commercial source code. One line also appeared before the prompt: `/etc/zprofile:338: FSUZ0155 no matches found: /z/z70127/.npm/_logs/*.log`. It did not block anything, so I left it alone and carried on.
+
+4. My first `ls` showed only `tmp`. I ran `uss-setup`, got back 'Hi and welcome to the ZXPLORE UNIX System Service Challenges!', and ran `ls` again. This time the home directory was full, and it was richer than the tutorial example: `animals.sh`, `assembler`, `cobol-check.config.properties`, `codeathons`, `directory1`, `dslist.py`, `movie-data.csv`, `members.py`, `odbc`, and more, left over from earlier work. That was a useful reminder that a real home directory is not a clean textbook example.
+
+
+### Part 2 — Moving around, and making files
+
+5. I checked where I was with `pwd`, which printed `/z/z70127`. Then `cd ~` to go home, `cd directory1` to go in, `pwd` again to confirm `/z/z70127/directory1`, and `cd ..` to go back one level.
+
+6. Then I made something of my own: `touch mynewfile` and `mkdir mynewdir`, and verified both with `ls`. The listing now showed `mynewdir` and `mynewfile` alongside everything else, including `code1.py`, `code2.py`, `go2`, `hackathons`, `j2p`, `scramble.sh`, `secret.txt`, `test`, and `zosmf`. I did not delete them at this point, and later the `du` output still showed them at 0, which is exactly what an empty file and an empty directory should look like.
+
+
+### Part 3 — The same files in Zowe
+
+7. A shell is one way in, Zowe is another. In the Zowe Explorer USS view I set the filter to `/z/z70127`, my own home directory in all lowercase. Seeing the same home directory in the terminal and in Zowe made the point concrete: USS files are not locked inside the terminal, and datasets are not the only way to look at what is on the system. I chose the terminal for the rest of this challenge and Zowe for checking, because typing the commands is what I needed to learn, and the view is what I needed to confirm.
+
+
+### Part 4 — Cracking the secret
+
+8. The task was to run `scramble.sh` against `/z/public/secret.txt` and find the rotation that decodes it. The program takes a file as its first argument and a rotation number as its second, and it only works on lowercase letters. It prints the decoded output, or garbage if the number is wrong.
+
+9. I tried in this order: 13, 7, 3, and 12. Every one of them produced a line of unreadable text, each starting with 'Processing..........Done!' and then garbage. The fifth try, 17, produced: 'congratulations! you unscrambled the message in the uss challenge!!' That was the whole method, and it is worth stating plainly: there was no shortcut, just five trials, four wrong answers discarded, and one right answer kept. Trying a number, reading the output, and deciding 'not this one' is the work, not a failure before the work.
+
+
+### Part 5 — Redirection, and getting the file exactly right
+
+10. Redirection is where `&gt;` and `&gt;&gt;` stop being theory. I ran the successful command again with `&gt; ussout.txt` at the end, so the output went into the file instead of onto the screen, and verified it with `cat ussout.txt`. Then I appended, never overwrote, with `&gt;&gt;`: first `du -ak &gt;&gt; ussout.txt`, then `date &gt;&gt; ussout.txt`. The difference matters, and this challenge is a good place to learn it, because overwriting at step 11 or 12 would have wiped out the decoded message.
+
+11. `du -ak` lists disk usage in kilobytes, with `-a` covering the current directory and everything below it. My home directory came out at 694 in total, and the listing included the leftovers from earlier challenges, the 0-size `mynewfile` and `mynewdir` I had just made, and `ussout.txt` itself at 8. The final `cat ussout.txt` showed the file in the right order: first the decoded message, then the `du` output, then the date, Tue Nov 3 00:37:34 CST 2026.
+
+
+
+### Part 6 — Validation
+
+12. I submitted the validation job `CHKUSS1` from `ZXP.PUBLIC.JCL`. In the Jobs view it showed as `@USS1(JOB02768) - SOW1 - CC 0000`. Then the platform showed the Challenge Complete overlay: 'Great work — your progress has been recorded.' That is the evidence, not just my word for it.
+
+
+
+### Why this matters for COBOL
+
+Without USS, a COBOL programmer is stuck in one half of the system. Datasets hold the source and the data, but the shell is where you move files around, run scripts, check disk usage, and chain commands together with redirection. The next challenge, Code, stays in USS and uses Python there, so this is not a detour. It is the working environment for what comes next. What I took away most is not any single command, but the habit: run a command, read its actual output, and only then decide what to do next. The scramble trials and the `&gt;` versus `&gt;&gt;` distinction both rewarded exactly that habit.
+
+Next: Code — learn the basics of programming using Python directly on a z/OS mainframe system (120 minutes).
+
+---
+
+## 日本語
+
+### USS とは、一言でいうと
+
+USS（UNIX System Services）は、z/OS の中にある POSIX 準拠の UNIX 環境です。</description><guid isPermaLink="true">https://YuQing-ai.github.io/CobolNote/post/06%20Navigating%20USS%20on%20z-OS-%20SSH%2C%20Shell%2C%20and%20Output%20Redirection.html</guid><pubDate>Tue, 03 Nov 2026 06:49:29 +0000</pubDate></item><item><title>05 JCL: Orchestrating Jobs, Fixing Errors, and Running COBOL</title><link>https://YuQing-ai.github.io/CobolNote/post/05%20JCL-%20Orchestrating%20Jobs%2C%20Fixing%20Errors%2C%20and%20Running%20COBOL.html</link><description>&gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: JCL1 | Beginner, Fundamentals | 60 minutes
 &gt; Platform status: Completed (as of 2026-11-02)
 &gt; Prerequisite: FILES1. Source: IBM Z Xplore official JCL1 challenge documentation, plus my own practice.
 &gt; Language order in this article: English → 日本語 → 中文. The title stays in English.
