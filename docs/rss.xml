@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Tue, 03 Nov 2026 07:22:55 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>07 Python on z/OS: Variables, If/Else, and While Loops</title><link>https://YuQing-ai.github.io/CobolNote/post/07%20Python%20on%20z-OS-%20Variables%2C%20If-Else%2C%20and%20While%20Loops.html</link><description># 07 Python on z/OS: Variables, If/Else, and While Loops
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>The Note for Learning COBOL</title><link>https://YuQing-ai.github.io/CobolNote</link><description>To document my learning of the COBOL language and Mainframe programming</description><copyright>The Note for Learning COBOL</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/74230535?s=400&amp;u=682f5a0e898c9cd4dba19d0c08ededaeb2ab530e&amp;v=4</url><title>avatar</title><link>https://YuQing-ai.github.io/CobolNote</link></image><lastBuildDate>Tue, 03 Nov 2026 07:38:05 +0000</lastBuildDate><managingEditor>The Note for Learning COBOL</managingEditor><ttl>60</ttl><webMaster>The Note for Learning COBOL</webMaster><item><title>07 Python on z/OS: Variables, If/Else, and While Loops</title><link>https://YuQing-ai.github.io/CobolNote/post/07%20Python%20on%20z-OS-%20Variables%2C%20If-Else%2C%20and%20While%20Loops.html</link><description># 07 Python on z/OS: Variables, If/Else, and While Loops
 
 &gt; Series: IBM Z Xplore — Fundamentals + Concepts | Challenge: CODE1 | Beginner, Fundamentals | 120 minutes
 &gt;
@@ -29,12 +29,16 @@ CODE1 is not a COBOL challenge. It is a first look at programming, done in Pytho
 
 4. Running `python3 code2.py` with `pumpkin` produced nothing, which is the correct behaviour for a word without a `z` when there is no `else` branch yet. I changed line 7 to `the_word = 'pizza'`, saved the file, and ran it again in the USS terminal. This time it printed: 'Yes! The letter z is in the word pizza'. That is the whole lesson of this step in miniature: change one value, save, rerun, and read the output. If you forget to save, you are testing the old file, not the new one.
 
+&lt;img width='1414' height='1141' alt='Image' src='https://github.com/user-attachments/assets/969d286a-fdac-4409-ba9e-b5d5931f4337' /&gt;
+
 
 ### Part 3 — Else, tested both ways
 
 5. Lines 15 and 16 of code2.py were commented out: `#else:` and `# print('Nope. The letter ' + the_letter + ' is NOT in the word ' + the_word)`. I deleted the `#` at the start of both lines, so the `else` lined up with the `if` on line 13, and its print line stayed indented under it. Indentation is not decoration in Python; it is how the program knows which lines belong to which branch.
 
 6. Then I tested both branches, not just the happy one. With `pizza`, the output was still 'Yes! The letter z is in the word pizza'. I changed the word to `'apple'` and ran it again, and this time it printed: 'Nope. The letter z is NOT in the word apple'. A branch you have only tested one way is a branch you have not really tested.
+
+&lt;img width='925' height='976' alt='Image' src='https://github.com/user-attachments/assets/4da6bc2b-3025-46d2-acea-a1db0d81d53c' /&gt;
 
 
 ### Part 4 — Marbles, and a loop that prints one line ten times
@@ -43,18 +47,26 @@ CODE1 is not a COBOL challenge. It is a first look at programming, done in Pytho
 
 8. The warning bug was the clearest problem-solving moment in this challenge. Lines 13 and 14, once uncommented, read `if (marbles &gt; 3):` followed by `print('Warning: You are running low on marbles!!')`. Run like that, the warning appeared after 'You have 5 marbles left.' and 'You have 4 marbles left.', and did not appear after 3, 2, or 1. That is exactly backwards: the condition was testing for plenty of marbles, not few. The fix was to change the condition to `if (marbles &lt;= 3):`, less than or equal to three. I did not move the `if` or rewrite the loop; changing one comparison operator was enough, because the `if` was already in the right place, after the 'You have' print and before the subtraction, so it checked the count that had just been reported.
 
+&lt;img width='940' height='1021' alt='Image' src='https://github.com/user-attachments/assets/3c6e7098-e217-4c06-8a0d-161c5bf2e514' /&gt;
+
 
 ### Part 5 — Drawing the marbles, and finishing cleanly
 
 9. The visual step was to add one line inside the loop, before the 'You have' print: `print(marble_dots[:marbles])`. The `[:marbles]` slice takes only the first `marbles` characters of the ten-asterisk string, so when 10 are left it prints ten asterisks, when 7 are left it prints seven, and so on. After the fix, the output ran down as expected: ********** with 10 left, ********* with 9, ******** with 8, ******* with 7, ****** with 6, and so on, with the warning only from 3 downwards.
 
+&lt;img width='911' height='1065' alt='Image' src='https://github.com/user-attachments/assets/96fbf7c4-dbfd-47d0-84c5-ae6de8094a35' /&gt;
+
 
 10. The last message had to appear once, and last. In the final file, `print('You are all out of marbles')` sits at line 25 with no indentation, outside and after the `while` loop, so it runs only when the loop has finished, when `marbles` has reached zero. The final output confirmed it: *** with 3 left and the warning, ** with 2 left and the warning, * with 1 left and the warning, then a blank line, then 'You are all out of marbles', and nothing after it. A message indented inside the loop would have printed ten times; a message with no indentation prints once, at the end, because that is where it belongs.
+
+&lt;img width='916' height='1040' alt='Image' src='https://github.com/user-attachments/assets/94798f91-7316-4121-ac98-a4d3c967d15d' /&gt;
 
 
 ### Part 6 — Validation
 
 11. Finally, I submitted the CHKCODE job from ZXP.PUBLIC.JCL, the same way as the earlier checks: find CHKCODE in the dataset list and submit it. The validation job runs my marbles.py, so it checks the whole thing at once: the right number of asterisks, the right spacing, the warning only from three downwards, and the final message exactly as in the tutorial screenshot. It passed, and the platform showed 'Challenge Complete!' with the note 'Great work — your progress has been recorded.' That is the point where this challenge stopped being a program I had run locally and became a completed step in Fundamentals.
+
+&lt;img width='1290' height='1005' alt='Image' src='https://github.com/user-attachments/assets/594b7c82-a3a8-4e0d-838c-859a789f3c21' /&gt;
 
 
 ### Why this matters for COBOL
