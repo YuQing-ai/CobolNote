@@ -72,7 +72,6 @@ CODE1 is not a COBOL challenge. It is a first look at programming, done in Pytho
 
 A COBOL program is also variables, conditions, loops, and subroutines, just written in a different syntax and run against datasets instead of files in a home directory. Learning to read Python first, on the same z/OS system, means the next time a COBOL program does not do what it should, I have a method: run it, read the actual output, find the one condition or the one line that is wrong, change it, save, and rerun. The two fixes in this challenge both rewarded that method. The `else` branch was not tested until I tried a word without a `z`, and the warning was not right until I read which counts it actually fired on, rather than which counts I assumed it would fire on.
 
-Next: Wrap Up — wrapping up Fundamentals.
 
 ---
 
@@ -120,7 +119,6 @@ CODE1 は COBOL のチャレンジではありません。z/OS 上で Python を
 
 COBOL のプログラムも、変数、条件、ループ、サブルーチンでできています。構文が違い、ホームディレクトリのファイルではなく、データセットに対して実行されるだけです。同じ z/OS システム上で、まず Python を読めるようになることは、次に COBOL のプログラムが思った通りに動かないときに、方法を持っているということです。実行し、実際の出力を読み、間違っている条件や行を 1 つ見つけ、変え、保存し、再実行する。このチャレンジの 2 つの修正は、どちらもその方法を報いるものでした。`else` の分岐は、z のない単語を試すまでテストされず、警告は、自分がそうなると思っていた数ではなく、実際にどの数で出たかを読むまで、正しくなりませんでした。
 
-次回：Wrap Up — Fundamentals のまとめ。
 
 ---
 
@@ -168,4 +166,3 @@ CODE1 不是 COBOL 关，而是用 Python 在 z/OS 上讲编程入门，重点�
 
 COBOL 程序也是变量、条件、循环、子程序，只是语法不同，跑的对象从主目录里的文件换成了数据集。在同一台 z/OS 上先学会读 Python，意味着下次 COBOL 程序不对的时候，我有办法：跑它、读真实输出、找到错的那一个条件或那一行、改掉、保存、重跑。这一关的两个修法都奖励了这个办法。else 分支是不试一个没有 z 的词就测不出来，警告是不读它实际在哪些数上触发、只凭自己以为的数就修不对。
 
-下一篇：Wrap Up — Fundamentals 收尾。
